@@ -1,105 +1,105 @@
-# ?? Platform? web pentru voluntariat
+# 🌍 Platformă web pentru voluntariat
 
-Aceast? aplica?ie web faciliteaz? identificarea, organizarea ?i participarea la activit??i de voluntariat printr-o hart? interactiv?. Utilizatorii pot vizualiza evenimente, comunica �n timp real prin chat, oferi ?i primi feedback, iar organiza?iile pot gestiona eficient evenimentele ?i voluntarii implica?i.
+Această aplicație web facilitează identificarea, organizarea și participarea la activități de voluntariat printr-o hartă interactivă. Utilizatorii pot vizualiza evenimente, comunica în timp real prin chat, oferi și primi feedback, iar organizațiile pot gestiona eficient evenimentele și voluntarii implicați.
 
 ---
 
-## ?? Instalare ?i rulare (testat pe Windows)
+## ⚙️ Instalare și rulare (testat pe Windows)
 
-Pentru rularea aplica?iei este necesar? instalarea urm?toarelor componente software, testate pe un sistem Windows cu instalare proasp?t?. Se recomand? utilizarea versiunilor indicate, pentru compatibilitate maxim?.
+Pentru rularea aplicației este necesară instalarea următoarelor componente software, testate pe un sistem Windows cu instalare proaspătă. Se recomandă utilizarea versiunilor indicate, pentru compatibilitate maximă.
 
 ### Instalare Java JDK 17
 
-- Se descarc? JDK 17 de la: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
-- Se verific? instalarea cu:
-  ```bash
+- Se descarcă JDK 17 de la: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+- Se verifică instalarea cu:
+  bash
   java -version
-  ```
+  
 
 ### Instalare Maven
 
-- Se descarc? versiunea 3.9.10 de la: https://maven.apache.org/download.cgi
+- Se descarcă versiunea 3.9.10 de la: https://maven.apache.org/download.cgi
 - Verificare:
-  ```bash
+  bash
   mvn -v
-  ```
+  
 
 ### Instalare Node.js LTS
 
-- Se descarc? de la: https://nodejs.org/en
+- Se descarcă de la: https://nodejs.org/en
 - Verificare:
-  ```bash
+  bash
   node -v
   npm -v
-  ```
+  
 
 ### Instalare Angular CLI
 
-- Se instaleaz? cu:
-  ```bash
+- Se instalează cu:
+  bash
   npm install -g @angular/cli
-  ```
+  
 - Verificare:
-  ```bash
+  bash
   ng version
-  ```
+  
 
-**Not?:** Angular CLI versiunea 20.x este compatibil? cu proiectul (Angular 19).
+*Notă:* Angular CLI versiunea 20.x este compatibilă cu proiectul (Angular 19).
 
 ### Instalare PostgreSQL
 
-- Se descarc? versiunea 17.5 de la: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-- Dup? instalare, se creeaz? o baz? de date �n PgAdmin
+- Se descarcă versiunea 17.5 de la: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+- După instalare, se creează o bază de date în PgAdmin
 
-�n PgAdmin, click dreapta pe baza de date ? Query Tool ? se ruleaz? codul din `Backend/src/main/resources/schema.sql` 
+În PgAdmin, click dreapta pe baza de date → Query Tool → se rulează codul din Backend/src/main/resources/schema.sql 
 
-### Clonare proiect ?i rulare aplica?ie backend
+### Clonare proiect și rulare aplicație backend
 
-```bash
+bash
 git clone <URL_PROIECT>
 cd Backend
 mvn install
-```
 
-Configureaz? `application.yml` cu datele bazei de date ?i email-ul pentru trimiterea notific?rilor.
+
+Configurează application.yml cu datele bazei de date și email-ul pentru trimiterea notificărilor.
 
 Rulare backend:
-```bash
+bash
 mvn spring-boot:run
-```
 
-### Rulare aplica?ie frontend
 
-```bash
+### Rulare aplicație frontend
+
+bash
 cd Frontend
 npm install
 ng serve --open
-```
+
 
 ### Configurare Google Maps API
 
-1. Acceseaz?: [https://developers.google.com/maps](https://developers.google.com/maps)
-2. Urmeaz? pa?ii:
-   - Click pe **Get Started**
-   - Creeaz? un nou proiect
-   - Genereaz? o cheie API
-3. �n fi?ierul `index.html`, �nlocuie?te `your_api_key` cu cheia generat?.
+1. Accesează: [https://developers.google.com/maps](https://developers.google.com/maps)
+2. Urmează pașii:
+   - Click pe *Get Started*
+   - Creează un nou proiect
+   - Generează o cheie API
+3. În fișierul index.html, înlocuiește your_api_key cu cheia generată.
 
 
 ---
 
-## ?? Arhitectura
+## 🧱 Arhitectura
 
-- **Frontend:** Angular 19
-- **Backend:** Java 17, Spring Boot
-- **Baza de date:** PostgreSQL
+- *Frontend:* Angular 19
+- *Backend:* Java 17, Spring Boot
+- *Baza de date:* PostgreSQL
 
 ---
 
-## ?? Direc?ii viitoare
+## 🚀 Direcții viitoare
 
 - Autentificare cu conturi Google/Facebook
-- Chat extins cu func?ionalit??i avansate (reac?ii, ata?amente)
-- Sistem de notific?ri �n timp real
-- Algoritmi inteligen?i de recomandare a evenimentelor
+- Chat extins cu funcționalități avansate (reacții, atașamente)
+- Sistem de notificări în timp real
+- Algoritmi inteligenți de recomandare a evenimentelor
 - Export statistici personalizate pentru organizatori
