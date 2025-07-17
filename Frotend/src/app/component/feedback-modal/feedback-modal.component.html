@@ -1,0 +1,21 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal">
+    <h3 *ngIf="context === 'TO_ORGANIZER'">Feedback pentru organizator</h3>
+    <h3 *ngIf="context === 'TO_PARTICIPANT'">Feedback pentru participant</h3>
+
+    <label class="feedback-label">Rating:</label>
+    <div class="stars">
+      <span *ngFor="let r of [1,2,3,4,5]"
+            (click)="rating = r"
+            [class.filled]="r <= rating">★</span>
+    </div>
+
+    <label class="feedback-label">Mesaj:</label>
+    <textarea [(ngModel)]="comment" placeholder="Scrie comentariul aici"></textarea>
+
+    <div class="actions">
+      <button (click)="submit()">Trimite</button>
+      <button (click)="cancel()">Anulează</button>
+    </div>
+  </div>
+</div>

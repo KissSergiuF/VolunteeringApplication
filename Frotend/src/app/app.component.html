@@ -1,0 +1,71 @@
+<mat-toolbar>
+  <div class="nav-buttons">
+    <button mat-menu-item routerLink="/home">Acasa</button>
+    <button mat-menu-item routerLink="/about-us">Despre noi</button>
+    <button mat-menu-item routerLink="/contact-us">Contact</button>
+    <button mat-menu-item routerLink="/map">Harta</button>
+  </div>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button [matMenuTriggerFor]="isLoggedIn ? userMenu : authMenu" class="profile-icon-btn">
+    <ng-container *ngIf="isLoggedIn && profilePictureUrl; else defaultIcon">
+      <img [src]="profilePictureUrl" alt="Profile" class="profile-image" />
+    </ng-container>
+    <ng-template #defaultIcon>
+      <mat-icon class="large-icon">account_circle</mat-icon>
+    </ng-template>
+  </button>
+  
+  
+  
+  
+
+  <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-menu #userMenu="matMenu">
+  <button mat-menu-item routerLink="/profil">
+    <mat-icon>person</mat-icon>
+    <span>Profil</span>
+  </button>
+  <button mat-menu-item routerLink="/archived-events">
+    <mat-icon>archive</mat-icon>
+    <span>Arhiva evenimente</span>
+  </button>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>
+
+
+<mat-menu #authMenu="matMenu">
+  <button mat-menu-item (click)="goToLogin('login')">
+    <mat-icon>login</mat-icon>
+    <span>Autentificare</span>
+  </button>
+  <button mat-menu-item (click)="goToLogin('voluntar')">
+    <mat-icon>person_add_alt_1</mat-icon>
+    <span>Înregistrează voluntar</span>
+  </button>
+  <button mat-menu-item (click)="goToLogin('organizatie')">
+    <mat-icon>domain_add</mat-icon>
+    <span>Înregistrează organizație</span>
+  </button>
+</mat-menu>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink="/home">Acasa</button>
+  <button mat-menu-item routerLink="/about-us">Despre noi</button>
+  <button mat-menu-item routerLink="/contact-us">Contact</button>
+  <button mat-menu-item routerLink="/map">Harta</button>
+</mat-menu>
+
+
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>
+

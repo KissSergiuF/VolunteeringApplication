@@ -1,0 +1,179 @@
+<div class="chat-layout">
+  <div class="chat-sidebar">
+    <h4 class="title">Arhivă evenimente</h4>
+    <ul>
+      <li *ngFor="let event of archivedEvents"
+          [class.active]="event.id === selectedEventId"
+          (click)="selectEvent(event)">
+        <div class="event-info">
+          <span class="event-title">{{ event.name }}</span>
+          <span class="event-category">Categorie: {{ event.category }}</span>
+          <span class="event-description">Descriere: {{ event.description }}</span>
+          <div class="event-location">
+            <mat-icon>location_on</mat-icon> {{ event.location }}
+          </div>
+          <span class="event-dates">
+            <ng-container *ngIf="event.startDate === event.endDate; else multiDay">
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y' }},
+              {{ event.startDate | date:'HH:mm' }} - {{ event.endDate | date:'HH:mm' }}
+            </ng-container>
+            <ng-template #multiDay>
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y, HH:mm' }} - {{ event.endDate | date:'dd MMM y, HH:mm' }}
+            </ng-template>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="chat-main" *ngIf="selectedEventId">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <h3 class="event-title-text">{{ selectedEventTitle }}</h3>
+      </div>
+
+      <div class="chat-header-actions">
+        <div class="feedback-area">
+          <button *ngIf="userRole === 'USER' && !hasGivenFeedback"
+                  class="feedback-button"
+                  (click)="openFeedback(selectedEvent)">
+            Trimite feedback
+          </button>
+          <button *ngIf="userRole === 'ASSOCIATION' && !selectedEvent?.certificatesGenerated" 
+                  class="feedback-button" 
+                  (click)="openCertificatesSection()">
+              Generează adeverințe
+          </button>
+          <span *ngIf="userRole === 'ASSOCIATION' && selectedEvent?.certificatesGenerated" class="feedback-submitted-note">
+              Adeverințele au fost deja generate și trimise
+          </span>
+
+        </div>
+
+        <div class="chat-header-right-group">
+          <button *ngIf="userRole === 'ASSOCIATION'" class="feedback-button" (click)="openParticipantsFeedbackPopup()">
+            Feedback participanți
+          </button>
+          <div class="chat-header-right" (click)="toggleMembersDropdown()" title="Vezi membri">
+            <mat-icon>people</mat-icon>
+            {{ allMembers.length }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showMembersDropdown" class="members-dropdown">
+        <h4>Membrii evenimentului</h4>
+        <ul>
+          <li *ngFor="let m of allMembers" (contextmenu)="onRightClick($event, m)">
+            <img [src]="m.profilePicture ? 'http://localhost:8080' + m.profilePicture : 'Default_pfp.jpg'" alt="pfp">
+            {{ m.firstName }} {{ m.lastName }}
+            <span *ngIf="m.id === currentUserId" class="you-label">(eu)</span>
+            <span *ngIf="m.id === selectedEventOrganizerId" class="you-label">(organizator)</span>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div *ngIf="contextMenuVisible"
+           class="context-menu"
+           [ngStyle]="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+        <button (click)="goToUserProfile()">Vezi profil</button>
+      </div>
+    </div>
+
+    <div class="chat-messages" #scrollMe>
+      <div *ngFor="let msg of messages"
+           [ngClass]="{'own-message': msg.senderId === currentUserId, 'other-message': msg.senderId !== currentUserId}"
+           (contextmenu)="onRightClick($event, {
+             id: msg.senderId,
+             firstName: msg.senderName,
+             profilePicture: msg.senderProfilePicture
+           })">
+
+        <div class="message-header">
+          <img [src]="msg.senderProfilePicture ? 'http://localhost:8080' + msg.senderProfilePicture : 'Default_pfp.jpg'"
+               alt="Avatar" width="32" height="32">
+          <div>
+            <strong>{{ msg.senderName }}</strong><br>
+            <small>{{ msg.timestamp | date:'short' }}</small>
+          </div>
+        </div>
+
+        <div class="message-body">{{ msg.message }}</div>
+      </div>
+    </div>
+
+    <div class="chat-disabled">
+      <p>Acest chat este arhivat. Nu poți trimite mesaje.</p>
+    </div>
+
+    <app-feedback-modal
+      [visible]="showFeedbackModal"
+      [eventId]="selectedEventIdForFeedback"
+      [fromUserId]="currentUserId"
+      [toUserId]="feedbackReceiverId"
+      [context]="feedbackContext"
+      (close)="showFeedbackModal = false"
+      (submitted)="handleFeedbackSubmit($event)">
+    </app-feedback-modal>
+    
+    <div class="participants-popup" *ngIf="showParticipantsModal">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3>Participanți la eveniment</h3>
+          <button (click)="closeParticipantsFeedbackPopup()">X</button>
+        </div>
+        <ul class="popup-participants-list">
+          <li *ngFor="let p of participants" class="popup-participant-item">
+            <img [src]="p.profilePicture ? 'http://localhost:8080' + p.profilePicture : 'Default_pfp.jpg'" alt="pfp" />
+            <span>{{ p.firstName }} {{ p.lastName }}</span>
+            <button
+              *ngIf="!p.feedbackGiven"
+              class="feedback-button feedback-active"
+              (click)="giveFeedbackToParticipant(p)">
+              Trimite feedback
+            </button>
+
+            <span
+              *ngIf="p.feedbackGiven"
+              class="feedback-submitted-note">
+              Feedback trimis
+            </span>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="certificates-section" *ngIf="showCertificatesSection">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3>Generează adeverințe</h3>
+          <button (click)="showCertificatesSection = false">X</button>
+        </div>
+        <div class="form-group">
+        <label>Nume organizație:</label>
+        <input type="text" [(ngModel)]="organizationName" placeholder="Introdu numele organizației" />
+        </div>
+        <div class="form-group">
+        <label>Încarcă ștampilă:</label>
+        <input type="file" (change)="onStampSelected($event)" />
+        </div>
+        <h4>Participanți:</h4>
+        <ul class="popup-participants-list">
+          <li *ngFor="let p of participantsWithHours; let i = index" class="popup-participant-item">
+            <img [src]="p.profilePicture ? 'http://localhost:8080' + p.profilePicture : 'Default_pfp.jpg'" alt="pfp" />
+            <span>{{ p.firstName }} {{ p.lastName }}</span>
+            <input type="number" [(ngModel)]="p.hours" min="0" placeholder="Ore" />
+            <button class="feedback-button feedback-active" (click)="removeParticipantFromCertificates(i)">X</button>
+          </li>
+        </ul>
+    
+        <div class="popup-actions">
+          <button (click)="submitCertificates()">Generează și trimite</button>
+          <button (click)="showCertificatesSection = false">Anulează</button>
+        </div>
+      </div>
+  </div>
+</div>  

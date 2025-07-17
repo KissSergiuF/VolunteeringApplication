@@ -1,0 +1,93 @@
+<div class="chat-layout">
+  <div class="chat-sidebar">
+    <h4 class="title">Conversații</h4>
+    <ul>
+      <li *ngFor="let event of myEvents" 
+          [class.active]="event.id === selectedEventId"
+          (click)="selectEvent(event)"
+          [title]="event.description">
+        <div class="event-info">
+          <span class="event-title">{{ event.name }}</span>
+          <span class="event-category">Categorie: {{ event.category }}</span>
+          <span class="event-description">Descriere: {{ event.description }}</span>
+          <div class="event-location">
+            <mat-icon>location_on</mat-icon> {{ event.location }}
+          </div>
+          <span class="event-dates">
+            <ng-container *ngIf="event.startDate === event.endDate; else multiDay">
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y' }},
+              {{ event.startDate | date:'HH:mm' }} - {{ event.endDate | date:'HH:mm' }}
+            </ng-container>
+            <ng-template #multiDay>
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y, HH:mm' }} - {{ event.endDate | date:'dd MMM y, HH:mm' }}
+            </ng-template>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="chat-main" *ngIf="selectedEventId">
+    <div class="chat-header">
+      <h3>{{ selectedEventTitle }}</h3>
+      <div class="chat-header-right" (click)="toggleMembersDropdown()" title="Vezi membri">
+        <mat-icon>people</mat-icon>
+        {{ allMembers.length }}
+      </div>
+
+      <div *ngIf="showMembersDropdown" class="members-dropdown">
+        <h4>Membri eveniment</h4>
+        <ul>
+          <li *ngFor="let m of allMembers" (contextmenu)="onRightClick($event, m)">
+            <img [src]="m.profilePicture ? 'http://localhost:8080' + m.profilePicture : 'Default_pfp.jpg'" alt="pfp">
+            {{ m.firstName }} {{ m.lastName }}
+            <span *ngIf="m.id === currentUser.id" class="you-label">(eu)</span>
+            <span *ngIf="m.id === selectedEventOrganizerId" class="you-label">(organizator)</span>
+          </li>
+        </ul>
+        </div>
+        <div *ngIf="contextMenuVisible"
+            class="context-menu"
+            [ngStyle]="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+          
+
+          <button (click)="goToUserProfile()">Vizualizează profilul</button>
+          
+          <button *ngIf="currentUser.role === 'ASSOCIATION' && contextUser?.id !== currentUser.id"
+                  (click)="kickUser()">Elimină din eveniment</button>
+        </div>
+
+    </div>
+
+    <div class="chat-messages" #scrollMe>
+      <div *ngFor="let msg of messages" 
+           [ngClass]="{'own-message': msg.senderId === currentUser.id}"
+           (contextmenu)="onRightClick($event, { id: msg.senderId, firstName: msg.senderName, profilePicture: msg.senderProfilePicture })"> 
+        <div class="message-header">
+          <img [src]="msg.senderProfilePicture ? 'http://localhost:8080' + msg.senderProfilePicture : 'Default_pfp.jpg'" 
+               alt="Avatar" width="32" height="32" style="border-radius: 50%;">
+          <div>
+            <strong>{{ msg.senderName }}</strong><br>
+            <small>{{ msg.timestamp | date:'short' }}</small>
+          </div>
+        </div>
+        <div class="message-body">{{ msg.message }}</div>
+      </div>
+    </div>
+
+    <div class="chat-input" *ngIf="isEventActive; else chatDisabled">
+      <input [(ngModel)]="newMessage"
+             (keydown.enter)="sendMessage()"
+             placeholder="Type your message..." />
+      <button (click)="sendMessage()">Send</button>
+    </div>
+
+    <ng-template #chatDisabled>
+      <div class="chat-disabled">
+        <p>This chat is closed. The event has ended.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

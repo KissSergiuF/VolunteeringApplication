@@ -1,0 +1,89 @@
+<div class="wrapper">
+  <div class="form-box login" *ngIf="!showRegister">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="loginUser()">
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        <mat-error *ngIf="loginEmail?.hasError('required')">Email-ul este obligatoriu</mat-error>
+        <mat-error *ngIf="loginEmail?.hasError('pattern') && !loginEmail?.hasError('required')">
+          Te rog introdu o adresă de email validă
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Parolă</mat-label>
+        <input matInput type="password" formControlName="password" />
+        <mat-error *ngIf="loginPassword?.hasError('required')">Parola este obligatorie</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" class="btnn" [disabled]="loginForm.invalid">Login</button>
+
+      <div class="login-register">
+        <p>Nu ai deja un cont? <a (click)="toggleRegister(true)">Înregistrează-te</a></p>
+      </div>
+      
+      <div class="error" *ngIf="errorMessage">{{errorMessage}}</div>
+    </form>
+  </div>
+
+  <div class="form-box register" *ngIf="showRegister">
+    <h2>Înregistrează-te acum</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="registerUser()">
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Prenume</mat-label>
+        <input matInput type="text" formControlName="firstName" />
+        <mat-error *ngIf="regFirstName?.hasError('required')">Prenumele este obligatoriu</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Nume</mat-label>
+        <input matInput type="text" formControlName="lastName" />
+        <mat-error *ngIf="regLastName?.hasError('required')">Numele este obligatoriu</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        <mat-error *ngIf="regEmail?.hasError('required')">Email-ul este obligatoriu</mat-error>
+        <mat-error *ngIf="regEmail?.hasError('pattern') && !regEmail?.hasError('required')">
+          Te rog introdu o adresă de email validă
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Parolă</mat-label>
+        <input matInput type="password" formControlName="password" />
+        <mat-error *ngIf="regPassword?.hasError('required')">Parola este obligarorie</mat-error>
+        <mat-error *ngIf="regPassword?.hasError('minlength') && !regPassword?.hasError('required')">
+          Parola trebuie să aibă cel puțin 6 caractere
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Telefon</mat-label>
+        <input matInput type="text" formControlName="telephone" />
+        <mat-error *ngIf="regTelephone?.hasError('pattern')">
+          Te rog introdu un număr de telefon valid
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-box" floatLabel="always">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="USER">Voluntar</mat-option>
+          <mat-option value="ASSOCIATION">Organizație</mat-option>
+        </mat-select>
+        <mat-error *ngIf="regRole?.hasError('required')">Rolul este obligatoriu</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" type="submit" class="btnn" [disabled]="registerForm.invalid">Register</button>
+
+      <div class="login-register">
+        <p>Ai deja un cont? <a (click)="toggleRegister(false)">Login</a></p>
+      </div>
+      
+      <div class="error" *ngIf="errorMessage">{{errorMessage}}</div>
+    </form>
+  </div>
+</div>

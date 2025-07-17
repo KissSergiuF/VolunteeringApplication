@@ -1,0 +1,293 @@
+<div class="map-layout">
+  <div class="side-menu">
+    <h2>Evenimente</h2>
+
+    <button *ngIf="userRole === 'association' && userID != null" (click)="openEventForm()" class="add-event-btn">
+      <mat-icon>add</mat-icon> Adaugă eveniment
+    </button>
+
+
+    <div class="category-filter">
+      <label for="typeFilter">Filtrează după tip:</label>
+      <select id="typeFilter" [(ngModel)]="selectedFilterType">
+        <option value="all">Toate</option>
+        <option *ngIf="userID && (userRole === 'volunteer' || userRole === 'association')" value="my">
+          Evenimentele mele
+        </option>
+        <option value="available">Evenimente disponibile</option>
+        <option value="full">Evenimente pline</option>
+        <option *ngIf="userID && userRole === 'volunteer'" value="subscribed">Evenimente abonate</option> 
+      </select>
+    </div>
+    
+
+<div class="category-filter">
+  <label for="categorySelect">Filtrează după categorie:</label>
+  <select id="categorySelect" [(ngModel)]="selectedCategory">
+    <option value="">Toate</option>
+    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+  </select>
+</div>
+
+<div class="city-filter">
+  <label for="citySelect">Filtrează după oraș:</label>
+  <select id="citySelect" [(ngModel)]="selectedCity" (change)="centerMapOnCity()">
+    <option value="">Toate orașele</option>
+    <option *ngFor="let city of availableCities" [value]="city">
+      {{ city }} ({{ cityCounts[city] }})
+    </option>
+  </select>
+</div>
+
+<div class="date-filter">
+  <label for="dateFilter">
+    <mat-icon class="filter-icon">calendar_today</mat-icon>
+    Filtrează după dată:
+  </label>
+  <input type="date" id="dateFilter" [(ngModel)]="selectedDate" [min]="minDate">
+</div>
+
+
+
+    <div class="scrollable-events">
+      <ul class="event-list">
+        <li *ngFor="let event of filteredEvents()"
+            [class.active]="event === selectedEvent"
+            (click)="toggleEventSelection(event)">
+          <strong class="event-title">{{ event.name }}</strong>
+          <div class="event-category">({{ event.category }})</div>
+          <div class="event-description">Descriere: {{ event.description }}</div>          
+          <div class="event-location">
+            <mat-icon>location_on</mat-icon> {{ event.location }}
+          </div>
+          <div class="event-dates">
+            <ng-container *ngIf="event.startDate === event.endDate; else multiDay">
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y' }},
+              {{ event.startDate | date:'HH:mm' }} - {{ event.endDate | date:'HH:mm' }}
+            </ng-container>
+            <ng-template #multiDay>
+              <mat-icon>event</mat-icon>
+              {{ event.startDate | date:'dd MMM y, HH:mm' }} - {{ event.endDate | date:'dd MMM y, HH:mm' }}
+            </ng-template>
+          </div>
+          
+          <div class="volunteer-count">
+            <mat-icon>group</mat-icon>
+            <ng-container *ngIf="event.maxVolunteers; else infinite">
+              {{ getVolunteerCount(event.id) || 0 }} / {{ event.maxVolunteers }} voluntari
+            </ng-container>
+            <ng-template #infinite>
+              {{ getVolunteerCount(event.id) || 0 }} /
+              <span class="material-icons" style="vertical-align: middle;">all_inclusive</span> voluntari
+            </ng-template>
+          </div>
+          
+          
+          
+          <div *ngIf="event.banned && userID" class="banned-message">
+            <mat-icon>block</mat-icon> Ai fost eliminat din acest eveniment.
+          </div>
+            <ng-container *ngIf="!event.banned">
+              <button *ngIf="userRole === 'volunteer' && userID && !isRegistered(event.id) && !event.isFull"
+                      class="register-btn"
+                      (click)="registerToEvent(event.id); $event.stopPropagation();">
+                <mat-icon>check_circle</mat-icon> Înregistrează-te
+              </button>
+              <button *ngIf="userRole === 'volunteer' && userID && !isRegistered(event.id) && event.isFull && !isSubscribed(event.id)"
+                      class="subscribe-btn mat-elevation-z2"
+                      (click)="subscribeToEvent(event.id); $event.stopPropagation();">
+                <mat-icon class="icon-left">notifications</mat-icon> Anunță-mă când este loc
+              </button>
+              <button *ngIf="isSubscribed(event.id)" class="unsubscribe-btn" (click)="unsubscribeFromEvent(event.id)">
+                <mat-icon class="icon-left">notifications_off</mat-icon> Renunță la notificare
+              </button>
+              
+              <div *ngIf="userRole === 'volunteer' && isRegistered(event.id)" class="registered-actions">
+                <span class="already-registered">
+                  <mat-icon>check</mat-icon> Deja înregistrat
+                </span>
+                <button (click)="cancelRegistration(event.id); $event.stopPropagation();" class="cancel-btn">
+                  <mat-icon>cancel</mat-icon> Anulează înregistrarea
+                </button>
+              </div>
+
+              <button *ngIf="isChatAvailable(event)"
+                      class="open-chat-btn"
+                      (click)="goToChat(event.id); $event.stopPropagation();">
+                <mat-icon>chat</mat-icon> Deschide chat
+              </button>
+            </ng-container>
+
+          <button *ngIf="userRole === 'association' && event.organizerId == userID"
+                  class="cancel-btn"
+                  (click)="deleteEvent(event.id); $event.stopPropagation();">
+            <mat-icon>delete</mat-icon> Șterge eveniment
+          </button>
+
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="map-container">
+    <google-map #gmap
+      [center]="center" 
+      [zoom]="zoom"
+      [options]="mapOptions"
+      width="100%" 
+      height="100%">
+
+      <map-marker *ngIf="selectedEvent"
+                  [position]="{ lat: selectedEvent.lat, lng: selectedEvent.lng }"
+                  [title]="selectedEvent.name">
+      </map-marker>
+
+      <ng-container *ngIf="!selectedEvent">
+        <map-marker *ngFor="let event of filteredEvents()"
+                    [position]="{ lat: event.lat, lng: event.lng }"
+                    [title]="event.name">
+        </map-marker>
+      </ng-container>
+
+      <map-marker *ngIf="tempMarker"
+                  [position]="tempMarker"
+                  title="Locația noului eveniment"
+                  [options]="{ icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' }">
+      </map-marker>
+    </google-map>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showEventForm" (click)="closeEventForm()"></div>
+
+  <div class="modal" *ngIf="showEventForm">
+    <h3>Adaugă eveniment</h3>
+    <form (ngSubmit)="submitEvent()" #eventForm="ngForm">
+
+      <input type="text" placeholder="Numele evenimentului" [(ngModel)]="newEvent.name" name="name" required>
+      <br>
+
+      <textarea placeholder="Descriere" [(ngModel)]="newEvent.description" name="description" required></textarea>
+      <br>
+
+      <select [(ngModel)]="newEvent.category" name="category" required>
+        <option value="" disabled selected>Selectează categoria</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+      <br>
+
+      <div class="location-selection">
+        <label for="locationSearch">Locația evenimentului:</label>
+        <input type="text"
+              #searchBox
+              id="locationSearch"
+              placeholder="Începe să scrii o adresă sau numele unui loc..."
+              [(ngModel)]="newEvent.location"
+              name="location"
+              autocomplete="off"
+              required>
+      </div>
+      <br>
+      <div class="volunteers-limit">
+        <label for="maxVolunteers">Număr maxim de voluntari (opțional):</label>
+        <input type="number" id="maxVolunteers" name="maxVolunteers" min="1"
+               [(ngModel)]="newEvent.maxVolunteers"
+               placeholder="Nelimitat dacă este gol">
+      </div>
+      <br>
+
+      <div class="duration-selection">
+        <label>Durata evenimentului:</label>
+        <div class="duration-options">
+          <label>
+            <input type="radio" name="durationType" [(ngModel)]="durationType" value="oneDay"> 
+            O zi
+          </label>
+          <label>
+            <input type="radio" name="durationType" [(ngModel)]="durationType" value="multipleDays"> 
+            Mai multe zile
+          </label>
+        </div>
+      </div>
+      <br>
+
+
+<div class="date-selection">
+
+  <div *ngIf="durationType === 'oneDay'" class="row">
+    <div class="date-field">
+      <label>Data evenimentului:</label>
+      <input
+        type="date"
+        [(ngModel)]="newEvent.startDate"
+        name="eventDate"
+        required
+        [min]="minDate"
+        (change)="validateDates()"
+      />
+    </div>
+
+    <div class="date-field">
+      <label>Ora de început:</label>
+      <input
+        type="time"
+        [(ngModel)]="startTime"
+        name="startTime"
+        required
+        (change)="validateDates()"
+      />
+    </div>
+
+    <div class="date-field">
+      <label>Ora de sfârșit:</label>
+      <input
+        type="time"
+        [(ngModel)]="endTime"
+        name="endTime"
+        required
+        (change)="validateDates()"
+      />
+    </div>
+  </div>
+
+
+  <div *ngIf="durationType === 'multipleDays'">
+    <div class="row">
+      <div class="date-field">
+        <label>Data de început:</label>
+        <input type="date" [(ngModel)]="newEvent.startDate" name="startDate" required 
+              (change)="validateDates()" [min]="minDate">
+      </div>
+
+      <div class="date-field">
+        <label>Ora de început:</label>
+        <input type="time" [(ngModel)]="startTime" name="startTime" required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="date-field">
+        <label>Data de sfârșit:</label>
+        <input type="date" [(ngModel)]="newEvent.endDate" name="endDate" required
+              (change)="validateDates()" [min]="newEvent.startDate || minDate">
+      </div>
+
+      <div class="date-field">
+        <label>Ora de sfârșit:</label>
+        <input type="time" [(ngModel)]="endTime" name="endTime" required>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  <div *ngIf="dateError" class="date-error">
+      {{ dateError }}
+    </div>
+    <br>
+    <div class="form-buttons">
+      <button type="submit" [disabled]="!tempMarker || !eventForm.form.valid || dateError">Trimite</button>
+      <button type="button" (click)="closeEventForm()">Anulează</button>
+  </div>
+  </form>
+</div>
+</div>

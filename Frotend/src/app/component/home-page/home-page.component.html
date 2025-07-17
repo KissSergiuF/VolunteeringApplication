@@ -1,0 +1,140 @@
+<div *ngIf="!loading && !isLoggedIn">
+<div class="main-content">
+  <div class="image-section">
+    <img src="homepage.png" alt="Nature Scene" class="image" />
+    <div class="overlay-content">
+      <h1>Impreuna <span class="material-icons">volunteer_activism</span><br> pentru o lume mai buna</h1>
+      <p>
+        Fie că ești voluntar dornic să te implici sau organizație în căutare de sprijin, platforma noastră te ajută să faci diferența.
+      </p>
+      <div class="buttons">
+        <button mat-raised-button color="primary" class="btn-primary" (click)="goToLogin('USER')">
+          Devino voluntar
+        </button>
+        
+        <button mat-raised-button color="accent" class="btn-secondary" (click)="goToLogin('ASSOCIATION')">
+          Înregistrează o organizație
+        </button>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="how-it-works">
+    <h2>Cum funcționează platforma noastră?</h2>
+    <div class="roles">
+      <div class="role volunteer">
+        <h3>Pentru Voluntari</h3>
+        <ul>
+          <li>Creează-ți un cont și completează profilul tău.</li>
+          <li>Descoperă proiecte pe hartă care au nevoie de sprijin.</li>
+          <li>Înscrie-te și începe să faci o diferență în comunitate.</li>
+        </ul>
+      </div>
+      <div class="role organization">
+        <h3>Pentru Organizații</h3>
+        <ul>
+          <li>Înregistrează organizația ta și creează un profil.</li>
+          <li>Adaugă evenimente pe hartă pentru a atrage voluntari.</li>
+          <li>Conectează-te cu voluntari care vor să te sprijine.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slideshow-container">
+    <ng-container *ngFor="let slide of slides; let i = index">
+      <div
+        class="mySlides fade"
+        *ngIf="i === currentSlideIndex"
+      >
+        <div class="slide-content">
+          <h3>{{ slide.title }}</h3>
+          <p>{{ slide.text }}</p>
+        </div>
+      </div>
+    </ng-container>
+  
+    <a class="prev" (click)="prevSlide()">&#10094;</a>
+    <a class="next" (click)="nextSlide()">&#10095;</a>
+  </div>
+  <br>
+  
+  <div style="text-align:center">
+    <span
+      *ngFor="let slide of slides; let i = index"
+      class="dot"
+      [ngClass]="{ active: i === currentSlideIndex }"
+      (click)="goToSlide(i)"
+    ></span>
+  </div>
+  
+  
+  <div class="faq-section">
+    <h2>Întrebări frecvente</h2>
+    <div class="faq-item" *ngFor="let faq of faqs; let i = index">
+      <h3 (click)="toggleFAQ(i)">
+        {{ faq.question }}
+        <span class="arrow" [ngClass]="{ 'rotate': faq.open }">&#9660;</span>
+      </h3>
+      <p *ngIf="faq.open">{{ faq.answer }}</p>
+    </div>
+  </div>
+  </div>
+</div>
+<div *ngIf="!loading && isLoggedIn && userRole === 'USER'" class="logged-in-section">
+  <h2>Bine ai venit!</h2>
+
+  <section>
+    <h3>Evenimentele la care ești înscris</h3>
+    <div class="scrollable-box">
+      <ul>
+        <li *ngFor="let event of registeredEvents">
+          {{ event.name }} - {{ event.location }} - {{ event.startDate | date:'dd MMM y' }} → {{ event.endDate | date:'dd MMM y' }}
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h3>Feedback primit</h3>
+    <div class="scrollable-box">
+      <ul>
+        <li *ngFor="let feedback of userFeedbacks">
+          Rating: {{ feedback.rating }} - {{ feedback.comment }} 
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <button (click)="goToMap()">Vezi evenimente noi</button>
+</div>
+
+
+
+<div *ngIf="!loading && isLoggedIn && userRole === 'ASSOCIATION'" class="logged-in-section">
+  <h2>Bine ai venit!</h2>
+  <button (click)="goToMap()">Adaugă eveniment nou</button>
+
+  <section>
+    <h3>Evenimentele tale active</h3>
+    <div class="scrollable-box">
+      <ul>
+        <li *ngFor="let event of createdEvents">
+          {{ event.name }} - {{ event.location }} - {{ event.startDate | date:'dd MMM y' }} → {{ event.endDate | date:'dd MMM y' }}
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h3>Feedback primit de la voluntari</h3>
+    <div class="scrollable-box">
+      <ul>
+        <li *ngFor="let feedback of organizerFeedbacks">
+          Rating: {{ feedback.rating }} - {{ feedback.comment }}  
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

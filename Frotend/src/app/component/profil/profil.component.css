@@ -1,0 +1,171 @@
+
+.profile-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #162938;
+  font-size: 2rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+}
+
+.value {
+  color: #333;
+}
+
+.error {
+  text-align: center;
+  color: red;
+  margin-top: 3rem;
+  font-size: 1.2rem;
+}
+
+.profile-container {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin-top: 9%;
+}
+
+.profile-picture {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.profile-picture img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.editable-image {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.editable-image:hover {
+  transform: scale(1.05);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.75rem 0;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3rem;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+}
+
+.input-box {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.edit-button {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-action {
+  color: white !important;
+}
+.average-rating {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.feedback-section {
+  margin-top: 40px;
+}
+
+.feedback-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.feedback-user-pic {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.feedback-content {
+  flex: 1;
+}
+
+.clickable {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.clickable:hover {
+  color: #303f9f;
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.rating-box {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+}
+
+.separator {
+  margin: 0 4px;
+}
+

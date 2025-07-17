@@ -1,0 +1,85 @@
+
+<div class="profile-container" *ngIf="user; else errorTemplate">
+    <h2>Profilul meu</h2>
+  
+    <div class="profile-picture">
+      <label *ngIf="editing" for="profileImageInput">
+        <img
+          [src]="previewUrl || (user.profilePicture ? 'http://localhost:8080' + user.profilePicture : 'Default_pfp.jpg')"
+          alt="Poza de profil"
+          class="editable-image"
+        />
+      </label>
+      <img
+        *ngIf="!editing"
+        [src]="user.profilePicture ? 'http://localhost:8080' + user.profilePicture : 'Default_pfp.jpg'"
+        alt="Poza de profil"
+      />
+      <input id="profileImageInput" type="file" hidden (change)="onFileSelected($event)" />
+    </div>
+    <div class="average-rating" *ngIf="averageRating > 0">
+      {{ averageRating | number:'1.1-2' }} / 5.0
+      <mat-icon color="warn">star</mat-icon>
+      <span class="feedback-count clickable" (click)="toggleFeedbacks()">– {{ feedbackCount }} evaluări</span>
+    </div>
+    
+    
+    
+    <form *ngIf="editing" (ngSubmit)="submitProfileEdit()" #editForm="ngForm" class="edit-form">
+      <mat-form-field appearance="outline" class="input-box">
+        <mat-label>Prenume</mat-label>
+        <input matInput [(ngModel)]="editData.firstName" name="firstName" required />
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="input-box">
+        <mat-label>Nume</mat-label>
+        <input matInput [(ngModel)]="editData.lastName" name="lastName" required />
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="input-box">
+        <mat-label>Telefon</mat-label>
+        <input matInput [(ngModel)]="editData.telephone" name="telephone" />
+      </mat-form-field>
+  
+      <div class="form-buttons">
+        <button mat-stroked-button color="warn" (click)="cancelEdit()" type="button">Anulează</button>
+        <button mat-raised-button color="primary" type="submit">Salvează</button>
+      </div>
+    </form>
+  
+    <div *ngIf="!editing">
+      <div class="info-row"><span class="label">Prenume:</span><span class="value">{{ user.firstName }}</span></div>
+      <div class="info-row"><span class="label">Nume:</span><span class="value">{{ user.lastName }}</span></div>
+      <div class="info-row"><span class="label">Email:</span><span class="value">{{ user.email }}</span></div>
+      <div class="info-row"><span class="label">Telefon:</span><span class="value">{{ user.telephone }}</span></div>
+      <div class="info-row"><span class="label">Rol:</span><span class="value"> {{ user.role === 'USER' ? 'Voluntar' : (user.role === 'ASSOCIATION' ? 'Organizație' : user.role) }}</span></div>
+  
+      <div class="edit-button">
+        <button mat-raised-button color="primary" (click)="enableEdit()">Editează profilul</button>
+      </div>
+    </div>
+    <div class="feedback-section" *ngIf="!editing">
+      <div class="feedback-list" *ngIf="showFeedbacks">
+        <h3>Feedback-uri primite</h3>
+        <div *ngFor="let fb of feedbackList" class="feedback-card">
+          <img [src]="fb.fromUserProfilePicture ? 'http://localhost:8080' + fb.fromUserProfilePicture : 'Default_pfp.jpg'" 
+               alt="Poza utilizator" class="feedback-user-pic"/>
+          <div class="feedback-content">
+            <p class="feedback-header">
+              <strong>{{ fb.fromUserFullName }}</strong>
+              <span class="separator">–</span>
+              <i>{{ fb.eventName }}</i>
+              <span class="rating-box">{{ fb.rating }}/5 <mat-icon color="warn">star</mat-icon></span>
+            </p>
+               
+            <p>{{ fb.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <ng-template #errorTemplate>
+    <p class="error">{{ errorMessage }}</p>
+  </ng-template>

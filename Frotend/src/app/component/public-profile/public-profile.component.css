@@ -1,0 +1,119 @@
+.profile-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .profile-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #162938;
+    font-size: 2rem;
+  }
+  
+  .profile-picture {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-picture img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .average-rating {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.75rem 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.3rem;
+  }
+  
+  .label {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .value {
+    color: #333;
+  }
+  
+  .feedback-section {
+    margin-top: 40px;
+  }
+  
+  .feedback-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .feedback-user-pic {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .feedback-content {
+    flex: 1;
+  }
+  
+  .clickable {
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .clickable:hover {
+    color: #303f9f;
+  }
+  
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+  
+  .rating-box {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+  }
+  
+  .separator {
+    margin: 0 4px;
+  }
+  
+  .error {
+    text-align: center;
+    color: red;
+    margin-top: 3rem;
+    font-size: 1.2rem;
+  }

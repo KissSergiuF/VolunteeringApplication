@@ -1,0 +1,42 @@
+<div class="profile-container" *ngIf="user; else errorTemplate">
+    <h2>Profil utilizator</h2>
+  
+    <div class="profile-picture">
+      <img [src]="user.profilePicture ? user.profilePicture : 'Default_pfp.jpg'"
+           alt="Poza de profil" />
+    </div>
+  
+    <div class="average-rating" *ngIf="averageRating > 0">
+      {{ averageRating | number:'1.1-2' }} / 5.0
+      <mat-icon color="warn">star</mat-icon>
+      <span class="feedback-count clickable" (click)="toggleFeedbacks()">– {{ feedbackCount }} evaluări</span>
+    </div>
+  
+    <div class="info-row"><span class="label">Prenume:</span><span class="value">{{ user.firstName }}</span></div>
+    <div class="info-row"><span class="label">Nume:</span><span class="value">{{ user.lastName }}</span></div>
+    <div class="info-row"><span class="label">Email:</span><span class="value">{{ user.email }}</span></div>
+    <div class="info-row"><span class="label">Telefon:</span><span class="value">{{ user.telephone }}</span></div>
+  
+    <div class="feedback-section">
+      <div class="feedback-list" *ngIf="showFeedbacks">
+        <h3>Feedback-uri primite</h3>
+        <div *ngFor="let fb of feedbackList" class="feedback-card">
+            <img [src]="fb.fromUserProfilePicture ? 'http://localhost:8080' + fb.fromUserProfilePicture : 'Default_pfp.jpg'" 
+               alt="Poza utilizator" class="feedback-user-pic"/>
+          <div class="feedback-content">
+            <p class="feedback-header">
+              <strong>{{ fb.fromUserFullName }}</strong>
+              <span class="separator">–</span>
+              <i>{{ fb.eventName }}</i>
+              <span class="rating-box">{{ fb.rating }}/5 <mat-icon color="warn">star</mat-icon></span>
+            </p>
+            <p>{{ fb.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #errorTemplate>
+    <p class="error">{{ errorMessage }}</p>
+  </ng-template>
